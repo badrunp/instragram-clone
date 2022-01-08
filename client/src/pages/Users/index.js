@@ -26,6 +26,7 @@ const Users = () => {
     loading: false,
     userId: null,
   });
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("/users", {
@@ -36,6 +37,7 @@ const Users = () => {
       .then((res) => res.json())
       .then((data) => {
         setUsers(data.users);
+        setLoading(false)
       })
       .catch((error) => {
         console.log(error);
@@ -74,90 +76,99 @@ const Users = () => {
 
   return (
     <>
-      {users.length > 1 ? (
-        <Container fixed>
-          <Grid container justify="center" style={{ marginTop: "80px" }}>
-            <Grid item xs={12} md={8}>
-              <Paper style={{ padding: "20px" }}>
-                {users.length > 0
-                  ? users.map((item) => {
-                      if (
-                        !state.following.includes(item._id) &&
-                        state._id !== item._id
-                      ) {
-                        return (
-                          <Grid
-                            container
-                            key={item._id}
-                            alignItems="center"
-                            spacing={1}
-                            style={{
-                              borderBottom: "1px solid rgba(0,0,0,.2)",
-                              padding: "5px 0",
-                            }}
-                          >
-                            <Grid item>
-                              <Link
-                                to={`/profil/${item._id}`}
-                                style={{
-                                  textDecoration: "none",
-                                  color: "#3f51b5",
-                                }}
-                              >
-                                <Avatar src={item.photo} />
-                              </Link>
+      {
+        loading ? (
+
+          users.length > 1 ? (
+            <Container fixed>
+              <Grid container justify="center" style={{ marginTop: "80px" }}>
+                <Grid item xs={12} md={8}>
+                  <Paper style={{ padding: "20px" }}>
+                    {users.length > 0
+                      ? users.map((item) => {
+                        if (
+                          !state.following.includes(item._id) &&
+                          state._id !== item._id
+                        ) {
+                          return (
+                            <Grid
+                              container
+                              key={item._id}
+                              alignItems="center"
+                              spacing={1}
+                              style={{
+                                borderBottom: "1px solid rgba(0,0,0,.2)",
+                                padding: "5px 0",
+                              }}
+                            >
+                              <Grid item>
+                                <Link
+                                  to={`/profil/${item._id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "#3f51b5",
+                                  }}
+                                >
+                                  <Avatar src={item.photo} />
+                                </Link>
+                              </Grid>
+                              <Grid item>
+                                <Typography
+                                  variant="body2"
+                                  component={Link}
+                                  to={`/profil/${item._id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "#3f51b5",
+                                  }}
+                                >
+                                  {item.name}
+                                </Typography>
+                              </Grid>
+                              <div className={styles.grow} />
+                              <Grid item>
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  color="secondary"
+                                  style={{ boxShadow: "none" }}
+                                  onClick={() => handleFollowUser(item._id)}
+                                >
+                                  {loadingFollow.loading &&
+                                    item._id === loadingFollow.userId ? (
+                                    <CircularProgress
+                                      size={25}
+                                      style={{ color: "white" }}
+                                    />
+                                  ) : (
+                                    "Follow"
+                                  )}
+                                </Button>
+                              </Grid>
                             </Grid>
-                            <Grid item>
-                              <Typography
-                                variant="body2"
-                                component={Link}
-                                to={`/profil/${item._id}`}
-                                style={{
-                                  textDecoration: "none",
-                                  color: "#3f51b5",
-                                }}
-                              >
-                                {item.name}
-                              </Typography>
-                            </Grid>
-                            <div className={styles.grow} />
-                            <Grid item>
-                              <Button
-                                variant="contained"
-                                size="small"
-                                color="secondary"
-                                style={{ boxShadow: "none" }}
-                                onClick={() => handleFollowUser(item._id)}
-                              >
-                                {loadingFollow.loading &&
-                                item._id === loadingFollow.userId ? (
-                                  <CircularProgress
-                                    size={25}
-                                    style={{ color: "white" }}
-                                  />
-                                ) : (
-                                  "Follow"
-                                )}
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        );
-                      }
-                    })
-                  : null}
-              </Paper>
+                          );
+                        }
+                      })
+                      : null}
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Container>
+          ) : (
+            <Grid container justify="center">
+              <Grid item>
+                <Paper style={{ padding: "10px", marginTop: "20px" }}>
+                  <Typography>No users!</Typography>
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
-      ) : (
-        <Grid container justify="center">
-          <Grid item>
-            <Paper style={{ padding: "10px", marginTop: "20px" }}>
-              <Typography>No users!</Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-      )}
+          )
+
+        ) : (
+          <p>Loading...</p>
+        )
+      }
+
     </>
   );
 };
