@@ -77,7 +77,7 @@ const Users = () => {
   return (
     <>
       {
-        loading ? (
+        !loading ? (
 
           users.length > 1 ? (
             <Container fixed>
